@@ -25,13 +25,16 @@
   body {
     @apply min-h-screen font-serif;
     color: var(--color-text);
-    /* Soft watercolour spots layered over a vertical rice-paper gradient. */
-    background:
-      radial-gradient(circle at 15% 20%, rgba(168, 140, 80, 0.10), transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(120, 90, 60, 0.08), transparent 50%),
-      radial-gradient(circle at 50% 100%, rgba(168, 84, 59, 0.05), transparent 55%),
-      linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-end) 100%);
+    /* 古风 ink-painting backdrop with 四君子 already drawn into the four
+       corners. Falls back to the rice-paper colour if the image fails to
+       load. background-attachment: fixed keeps the painting anchored to
+       the viewport as the puzzle scrolls. */
+    background-image: url('./assets/paper-background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     background-attachment: fixed;
+    background-color: var(--color-bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

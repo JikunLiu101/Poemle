@@ -19,6 +19,7 @@ const state: PuzzleState = {
   cellStatuses: [['present', 'present', 'present', 'present', 'present']],
   charMap: { 月: 'present', 光: 'present', 床: 'present', 前: 'present', 明: 'present' },
   currentInput: 'AB',          // must be stripped on save
+  revealedPositions: [0, 2],
   gameOver: false,
   won: false,
 };
@@ -56,5 +57,27 @@ describe('storage', () => {
     savePuzzleState(state);
     clearPuzzleState();
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  });
+
+  it('loadPuzzleState defaults revealedPositions to [] for pre-hint saves', () => {
+    const legacy = {
+      mode: 'daily',
+      sentenceId: 1,
+      answer: '床前明月光',
+      guesses: [],
+      cellStatuses: [],
+      charMap: {},
+      gameOver: false,
+      won: false,
+      // No revealedPositions field — predates the hint feature.
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(legacy));
+    const loaded = loadPuzzleState()!;
+    expect(loaded.revealedPositions).toEqual([]);
+  });
+
+  it('loadPuzzleState returns null on structurally invalid saves', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ answer: 42 }));
+    expect(loadPuzzleState()).toBeNull();
   });
 });

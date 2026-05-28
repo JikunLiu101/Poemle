@@ -35,6 +35,8 @@ export interface PuzzleState {
   cellStatuses: CharStatus[][];
   charMap: Record<string, CharStatus>;
   currentInput: string;
+  /** Sorted-ascending answer indices the player has had revealed via 提示. */
+  revealedPositions: number[];
   gameOver: boolean;
   won: boolean;
 }

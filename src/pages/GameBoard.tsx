@@ -38,9 +38,11 @@ export function GameBoard({ state, dispatch }: GameBoardProps) {
       <PreviewRow
         length={length}
         input={state.currentInput}
+        answer={state.answer}
         charMap={state.charMap}
         cellStatuses={state.cellStatuses}
         guesses={state.guesses}
+        revealedPositions={state.revealedPositions}
       />
 
       <GuessInput
@@ -50,6 +52,15 @@ export function GameBoard({ state, dispatch }: GameBoardProps) {
         onChange={(input) => dispatch({ type: 'UPDATE_INPUT', input })}
         onSubmit={() => dispatch({ type: 'SUBMIT_GUESS' })}
       />
+
+      <button
+        type="button"
+        onClick={() => dispatch({ type: 'REVEAL_HINT' })}
+        disabled={state.gameOver}
+        className="btn-secondary text-sm"
+      >
+        提示
+      </button>
 
       <div className="w-full max-w-md mt-4">
         <CharacterTable charMap={state.charMap} />

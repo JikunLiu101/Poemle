@@ -4,9 +4,11 @@ import { CharCell } from './CharCell';
 export interface PreviewRowProps {
   length: number;
   input: string;
+  answer: string;
   charMap: Record<string, CharStatus>;
   cellStatuses: CharStatus[][];
   guesses: string[];
+  revealedPositions: number[];
 }
 
 function knownCorrectAt(
@@ -25,24 +27,28 @@ function knownCorrectAt(
 export function PreviewRow({
   length,
   input,
+  answer,
   charMap,
   cellStatuses,
   guesses,
+  revealedPositions,
 }: PreviewRowProps) {
+  const revealedSet = new Set(revealedPositions);
   const slots = Array.from({ length }, (_, i) => {
+    // Hint-revealed positions always show the answer character in 'correct'
+    // styling, overriding whatever the player typed at that slot.
+    if (revealedSet.has(i)) {
+      return { display: answer[i] ?? '', status: 'correct' as CharStatus, i };
+    }
     const typed = input[i] ?? '';
     const fixed = knownCorrectAt(i, cellStatuses, guesses);
-
     let status: CharStatus = 'unknown';
-    let display = typed;
-
     if (typed && charMap[typed] === 'absent') {
       status = 'absent';
     } else if (fixed && typed === fixed) {
       status = 'correct';
     }
-
-    return { display, status, i };
+    return { display: typed, status, i };
   });
 
   return (

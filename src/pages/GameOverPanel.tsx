@@ -32,9 +32,21 @@ export function GameOverPanel({
             {poem.author} · {poem.dynasty === 'tang' ? '唐' : '宋'}
           </p>
           <div className="mt-3 flex flex-col gap-1">
-            {poem.lines.map((l) => (
-              <p key={l.id} className="text-lg">{l.text}</p>
-            ))}
+            {poem.lines.map((l) => {
+              const isAnswer = l.id === state.sentenceId;
+              return (
+                <p
+                  key={l.id}
+                  className={
+                    isAnswer
+                      ? 'text-lg font-bold text-correct'
+                      : 'text-lg'
+                  }
+                >
+                  {l.text}
+                </p>
+              );
+            })}
           </div>
         </article>
       )}

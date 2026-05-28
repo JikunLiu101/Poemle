@@ -2,16 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { sentenceIndex } from './sentenceIndex';
 
 describe('sentenceIndex', () => {
-  it('flattens every line of every poem into a single array', () => {
-    // Seed dataset (Task 2) has 4 + 4 + 4 + 7 + 7 = 26 lines.
-    expect(sentenceIndex.length).toBe(26);
+  it('flattens every line of every poem into a single array of ≥ 1500 records', () => {
+    // The plan requires ≥ 1500 lines after the full dataset is curated (Task 25).
+    expect(sentenceIndex.length).toBeGreaterThanOrEqual(1500);
   });
 
-  it('records carry poemId, lineId, and text', () => {
+  it('records carry poemId, lineId, and non-empty text', () => {
     const first = sentenceIndex[0];
     expect(first.poemId).toBe(1);
-    expect(first.lineId).toBe(101);
-    expect(first.text).toBe('床前明月光');
+    expect(typeof first.lineId).toBe('number');
+    expect(first.text.length).toBeGreaterThan(0);
   });
 
   it('all lineIds are globally unique', () => {

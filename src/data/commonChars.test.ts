@@ -3,11 +3,8 @@ import { COMMON_CHARS } from './commonChars';
 import { PUNCTUATION_SET } from '../engine/constants';
 
 describe('COMMON_CHARS', () => {
-  it('has length 40 (or the dataset cap, whichever is smaller)', () => {
-    // The seed dataset has fewer than 40 unique chars; the export should
-    // contain as many as exist, up to a cap of 40.
-    expect(COMMON_CHARS.length).toBeLessThanOrEqual(40);
-    expect(COMMON_CHARS.length).toBeGreaterThan(0);
+  it('has length exactly 40 (the dataset has well over 40 unique characters)', () => {
+    expect(COMMON_CHARS.length).toBe(40);
   });
 
   it('contains no punctuation', () => {

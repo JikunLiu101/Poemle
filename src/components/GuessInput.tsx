@@ -92,9 +92,10 @@ export function GuessInput({
         }}
         onCompositionEnd={handleCompositionEnd}
         onChange={handleChange}
-        className="w-full max-w-sm rounded-lg border border-[#3a3a3c]
-                   bg-[#1a1a1b] px-3 py-2 text-center text-xl tracking-widest
-                   focus:border-white outline-none"
+        className="w-full max-w-sm rounded-lg border border-[#4a3a2a]
+                   bg-[#2a1f15] px-3 py-2 text-center text-xl tracking-widest
+                   text-[#f0e6d2]
+                   focus:border-[#f0e6d2] outline-none"
         placeholder={`输入 ${length} 字`}
       />
       <button type="submit" disabled={!ready} className="btn-primary">

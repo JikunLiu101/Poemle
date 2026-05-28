@@ -4,14 +4,17 @@
 
 @layer base {
   :root {
-    --color-bg: #121213;
-    --color-surface: #1a1a1b;
-    --color-border: #3a3a3c;
-    --color-text: #ffffff;
-    --color-text-muted: #818384;
+    /* 古风 palette: ink-warm dark background with cream-on-sepia text. */
+    --color-bg: #1d1410;
+    --color-bg-end: #2a1d14;
+    --color-surface: #2a1f15;
+    --color-border: #4a3a2a;
+    --color-text: #f0e6d2;
+    --color-text-muted: #9a8870;
     --color-correct: #538d4e;
     --color-present: #b59f3b;
-    --color-absent: #3a3a3c;
+    --color-absent: #4a3a2a;
+    --color-accent: #a8543b; /* cinnabar-ish accent — used for highlights */
   }
 
   html {
@@ -21,8 +24,15 @@
 
   body {
     @apply min-h-screen font-serif;
-    background-color: var(--color-bg);
     color: var(--color-text);
+    /* Stacked radial 'ink-wash' spots layered over a vertical sepia
+       gradient — gives a soft 古风 atmosphere without an image asset. */
+    background:
+      radial-gradient(circle at 15% 20%, rgba(200, 160, 80, 0.10), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(120, 90, 60, 0.10), transparent 50%),
+      radial-gradient(circle at 50% 100%, rgba(168, 84, 59, 0.06), transparent 55%),
+      linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-end) 100%);
+    background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -36,8 +46,9 @@
   }
 
   .btn-secondary {
-    @apply px-8 py-3 rounded-lg font-semibold text-white transition-all duration-200
-           border border-[#818384] hover:border-white hover:bg-white/10 active:scale-95;
+    @apply px-8 py-3 rounded-lg font-semibold transition-all duration-200
+           border border-[#7a6650] text-[#f0e6d2]
+           hover:border-[#f0e6d2] hover:bg-white/5 active:scale-95;
   }
 
   /* Shared box look. Size (width/height/text-size/border-thickness) is set
@@ -46,9 +57,14 @@
   .cell-base {
     @apply inline-flex items-center justify-center
            font-bold text-white
-           border-[#3a3a3c]
+           border-[#4a3a2a]
            select-none;
     font-family: 'Noto Serif SC', serif;
+  }
+
+  /* Brush-calligraphy title for the landing hero. */
+  .font-brush {
+    font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
   }
 }
 

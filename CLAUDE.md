@@ -21,7 +21,7 @@ lyrics). All data is bundled at build time; there is no backend and no login.
 | ---------------- | ------------------------------------------------- |
 | `npm run dev`    | Vite dev server with HMR                          |
 | `npm run build`  | `tsc -b && vite build` — produces static `dist/`  |
-| `npm run preview`| Serve the built `dist/` for smoke testing         |
+| `npm run preview`| Serve `dist/` for smoke test — open `http://localhost:4173/poemle/` (production base) |
 | `npm test`       | Vitest in watch mode                              |
 | `npm test -- --run` | Vitest one-shot (use in CI / verification)     |
 
@@ -30,19 +30,23 @@ lyrics). All data is bundled at build time; there is no backend and no login.
 ```
 src/
   types/index.ts          # Domain types: Poem, SentenceRecord, CharStatus, PuzzleState
+  assets/
+    paper-background.png  # 古风 ink-painting body background (4君子 inset)
   data/
-    poems.json            # Bundled dataset (500+ poems)
+    poems.json            # Bundled dataset (805 sentences, 411 tang + 394 song)
     index.ts              # Typed import of poems.json
     sentenceIndex.ts      # Flat { poemId, lineId, text } index, frozen
     commonChars.ts        # Top-40 frequency-ranked characters
   engine/
+    constants.ts          # PUNCTUATION_SET, STORAGE_KEY
+    cjk.ts                # CJK_RE + onlyCJK / cjkCount / filterInput helpers
     hash.ts               # FNV-1a 32-bit for daily seed
     punctuation.ts        # Strip + slot-map classical punctuation
     evaluate.ts           # Two-pass guess evaluation
     charMap.ts            # Best-known status per character (never downgrade)
-    puzzle.ts             # getDailyPuzzle / getRandomPuzzle
+    puzzle.ts             # getDailyPuzzle / getRandomPuzzle / formatYYYYMMDD
   persistence/
-    storage.ts            # load / save / clear puzzle state
+    storage.ts            # load / save / clear puzzle state (with migrations)
   hooks/
     useGameState.ts       # useReducer over PuzzleState + storage sync
   components/             # CharCell, GuessRow, GuessHistory, PreviewRow,
@@ -65,14 +69,29 @@ Tests live next to the unit under test as `<file>.test.ts`.
      pool (consuming one occurrence) else `absent`.
 - **Status promotion only**: the per-character status map (`charMap`) never
   downgrades. `correct` > `present` > `absent` > `unknown`.
-- **Punctuation slots**: classical punctuation (`。 ， ！ ？ 、 ； ：`) in the
-  answer is pre-filled and read-only in the guess input; not counted in the
-  guessable length and not evaluated.
-- **Max attempts**: 8 (configurable constant).
+- **Sentence-level lines + punctuation slots**: each `line.text` in the
+  dataset is a full sentence with intra-sentence punctuation (`，；：、`).
+  Sentence-final punctuation (`。！？`) is the split delimiter used by the
+  curate script and never appears in stored lines. `PuzzleState.answer` is
+  the CJK-only form (used for evaluation); `PuzzleState.answerFull` carries
+  the punctuation for display. Punctuation cells render as read-only slots
+  in `PreviewRow` / `GuessRow`; the player can also type punctuation in
+  the input field but it's stripped by the reducer before evaluation.
+- **No attempt cap**. Players can guess unlimited times. They surrender
+  explicitly by exhausting the hint button — once every position has been
+  either correctly guessed or hint-revealed, the next click of 提示 sets
+  `gameOver: true, won: false`.
 - **Persistence key**: a single `poemle_active_puzzle` localStorage key.
-  `currentInput` (the live typing buffer) is excluded from the serialised state.
+  `currentInput` (the live typing buffer) is excluded from the serialised
+  state. Schema migrations live in `loadPuzzleState` (defaults for
+  `revealedPositions` and `answerFull` on pre-feature saves).
 - **On completed game (`gameOver: true`)**: do NOT auto-resume; route to
   landing or game-over screen instead.
+- **Daily-puzzle date stickiness**: the puzzle's date (YYYYMMDD) is
+  stamped at start time as `state.puzzleDate` so the displayed date
+  matches the puzzle, not "today". On rehydration, if a stored daily
+  puzzle's date is older than today the save is discarded so the player
+  is offered today's fresh daily.
 
 ## Conventions
 

@@ -131,11 +131,20 @@ export interface UseGameState {
 }
 
 export function useGameState(): UseGameState {
-  // Lazy init: rehydrate from storage, but never auto-resume a completed game.
+  // Lazy init: rehydrate from storage, but never auto-resume a completed
+  // game, and discard a stale daily puzzle (one whose date != today) so the
+  // player is offered today's fresh daily on the landing page.
   const [state, dispatch] = useReducer(reducer, EMPTY, () => {
     const persisted = loadPuzzleState();
     if (!persisted) return EMPTY;
     if (persisted.gameOver) return EMPTY;
+    if (
+      persisted.mode === 'daily' &&
+      persisted.puzzleDate &&
+      persisted.puzzleDate !== formatYYYYMMDD(new Date())
+    ) {
+      return EMPTY;
+    }
     return persisted;
   });
 

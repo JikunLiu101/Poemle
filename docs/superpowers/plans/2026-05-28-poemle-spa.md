@@ -1948,6 +1948,34 @@ The MVP is shippable with the seed dataset. These tasks are tracked here for vis
 
 Curate at least 300 Tang poems and 200 Song lyrics, assign globally unique `line.id` values, and replace `src/data/poems.json`. The flat index, common-character table, and engine handle scale automatically. Verify `COMMON_CHARS.length === 40` after replacement.
 
+**Sources** (古文岛 / guwendao.net — pre-organised collections; scrape title, author, dynasty, and line text per entry):
+
+Grade-level collections (broad coverage, mixed dynasties — useful for accessible, well-known pieces):
+
+- <https://www.guwendao.net/gushi/xiaoxue.aspx> — 小学必背 (primary-school canon)
+- <https://www.guwendao.net/gushi/chuzhong.aspx> — 初中必背 (junior-high canon)
+- <https://www.guwendao.net/gushi/gaozhong.aspx> — 高中必背 (senior-high canon)
+
+Dynasty-specific collections (use these to hit the 300 Tang / 200 Song quotas):
+
+- <https://www.guwendao.net/gushi/tangshi.aspx> — 唐诗 index
+- <https://www.guwendao.net/gushi/sanbai.aspx> — 唐诗三百首 (Three Hundred Tang Poems)
+- <https://www.guwendao.net/gushi/songsan.aspx> — 宋词三百首 (Three Hundred Song Lyrics)
+
+**Curation conventions** (must match the engine):
+
+- Strip all punctuation from `line.text` (`。 ， 、 ； ： ！ ？ 「 」 『 』 《 》 —`); store one cleaned phrase per `line` entry.
+- For 詞 (Song lyrics) with mixed line lengths, treat each clause/句 between punctuation marks as a separate `line`.
+- Set `dynasty` to `"tang"` or `"song"` based on the source page. Skip entries that aren't Tang or Song (e.g., 漢 / 魏 / 唐前 from the grade-school collections).
+- Use a monotonically increasing `poem.id` starting at 1; `line.id` can be `poem.id * 100 + position` (matches the seed convention) as long as the resulting IDs are globally unique. If any collide once datasets grow, switch to a flat global counter.
+- Deduplicate by (title, author) so the same poem appearing in multiple collections is included only once.
+
+**Acceptance checks** (after replacing `poems.json`):
+
+- `npm test -- --run` still green; `COMMON_CHARS.length === 40` (tighten the assertion in `src/data/commonChars.test.ts` accordingly).
+- Total `sentenceIndex.length >= 1500` (≈ 500 poems × 3 lines/poem on average).
+- Spot-check 5 random entries against the source page to catch transcription errors.
+
 ### Task 26 (separate plan): Polish & animations
 
 - Pre-fill punctuation visibly in the input row instead of just stripping it.

@@ -1,0 +1,26 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+dist-ssr/
+
+# Test output
+coverage/
+*.tsbuildinfo
+
+# Local env files
+.env
+.env.*.local
+*.local
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+
+# Plugin / tool caches kept under .github (e.g. ui-ux-pro-max data)
+.github/prompts/**

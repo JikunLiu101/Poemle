@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: #121213;
+    --color-surface: #1a1a1b;
+    --color-border: #3a3a3c;
+    --color-text: #ffffff;
+    --color-text-muted: #818384;
+    --color-correct: #538d4e;
+    --color-present: #b59f3b;
+    --color-absent: #3a3a3c;
+  }
+
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  body {
+    @apply min-h-screen font-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-8 py-3 rounded-lg font-semibold text-white transition-all duration-200
+           bg-[#538d4e] hover:bg-[#6aaf63] active:scale-95
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
+
+  .btn-secondary {
+    @apply px-8 py-3 rounded-lg font-semibold text-white transition-all duration-200
+           border border-[#818384] hover:border-white hover:bg-white/10 active:scale-95;
+  }
+
+  .cell-base {
+    @apply inline-flex items-center justify-center
+           w-11 h-11 sm:w-13 sm:h-13
+           text-xl font-bold text-white
+           border-2 border-[#3a3a3c]
+           select-none;
+    font-family: 'Noto Serif SC', serif;
+  }
+}
+
+/* Flip animation for guess reveal */
+@keyframes flip-reveal {
+  0%   { transform: rotateX(0deg); }
+  49%  { transform: rotateX(-90deg); }
+  50%  { transform: rotateX(-90deg); background-color: transparent; }
+  100% { transform: rotateX(0deg); }
+}
+
+.flip-reveal {
+  animation: flip-reveal 0.5s ease forwards;
+}
+
+/* Bounce on input */
+@keyframes cell-pop {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.1); }
+}
+
+.cell-pop {
+  animation: cell-pop 0.1s ease;
+}
+
+/* Shake on invalid */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}

@@ -6,8 +6,12 @@ describe('engine constants', () => {
     expect(MAX_ATTEMPTS).toBe(8);
   });
   it('recognises common Chinese punctuation', () => {
+    expect(PUNCTUATION_SET.size).toBe(14);
     expect(PUNCTUATION_SET.has('，')).toBe(true);
     expect(PUNCTUATION_SET.has('。')).toBe(true);
+    expect(PUNCTUATION_SET.has('「')).toBe(true);
+    expect(PUNCTUATION_SET.has('》')).toBe(true);
+    expect(PUNCTUATION_SET.has('—')).toBe(true);
     expect(PUNCTUATION_SET.has('A')).toBe(false);
   });
   it('uses a single storage key', () => {

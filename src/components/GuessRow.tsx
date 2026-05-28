@@ -31,10 +31,12 @@ export function GuessRow({ guess, statuses, answerFull }: GuessRowProps) {
   }
 
   return (
-    <div className="flex gap-1 justify-center flex-wrap">
-      {cells.map(({ key, char, status, readOnly }) => (
-        <CharCell key={key} char={char} status={status} readOnly={readOnly} />
-      ))}
+    <div className="w-full overflow-x-auto">
+      <div className="flex gap-1 w-max mx-auto">
+        {cells.map(({ key, char, status, readOnly }) => (
+          <CharCell key={key} char={char} status={status} readOnly={readOnly} />
+        ))}
+      </div>
     </div>
   );
 }

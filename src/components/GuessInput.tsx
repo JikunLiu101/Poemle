@@ -63,14 +63,19 @@ export function GuessInput({
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    setDraft(raw);
-    if (!composingRef.current) {
+    if (composingRef.current) {
+      // Mid-composition: pass pinyin/Latin through so the IME draft stays
+      // visible. Parent state stays put; we'll push filtered text up in
+      // onCompositionEnd.
+      setDraft(raw);
+    } else {
       // Direct input (typing without an IME, paste, backspace, etc.) —
-      // filter and propagate up.
-      onChange(filterCJK(raw, length));
+      // filter BEFORE updating the draft so a typed comma never flashes
+      // in the input element.
+      const filtered = filterCJK(raw, length);
+      setDraft(filtered);
+      onChange(filtered);
     }
-    // Mid-composition: parent state stays put. We'll push filtered text
-    // up in onCompositionEnd.
   };
 
   const handleCompositionEnd = (e: CompositionEvent<HTMLInputElement>) => {

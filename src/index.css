@@ -25,16 +25,13 @@
   body {
     @apply min-h-screen font-serif;
     color: var(--color-text);
-    /* 古风 ink-painting backdrop with 四君子 already drawn into the four
-       corners. `contain` (instead of cover) keeps the whole painting
-       visible regardless of viewport aspect — the rice-paper fallback
-       colour fills any bands and blends with the painting's own cream.
-       The asset is 16:9 (1672×941) so 16:10 desktops show only tiny
-       bands; mobile portrait shows the painting near the top with the
-       puzzle content below. */
+    /* 古风 ink-painting backdrop with 四君子 inset from the corners. The
+       motifs sit ~10% in from each edge so `cover`-style cropping on
+       non-16:9 viewports only nibbles into the cream margin — the
+       plants stay visible on phones, tablets, and ultra-wides alike. */
     background-image: url('./assets/paper-background.png');
-    background-size: contain;
-    background-position: center top;
+    background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-color: var(--color-bg);

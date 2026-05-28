@@ -4,7 +4,7 @@ const STATUS_BG: Record<CharStatus, string> = {
   correct: 'bg-correct border-correct text-white',
   present: 'bg-present border-present text-white',
   absent: 'bg-absent border-absent text-white',
-  unknown: 'bg-cell border-[#c4b59f] text-[#2a1d14]',
+  unknown: 'bg-white/60 border-[#7a6650] text-[#2a1d14]',
 };
 
 const SIZE_CLS = {

@@ -57,7 +57,7 @@
   .cell-base {
     @apply inline-flex items-center justify-center
            font-bold
-           border-[#c4b59f]
+           border-[#7a6650]
            select-none;
     font-family: 'Noto Serif SC', serif;
   }

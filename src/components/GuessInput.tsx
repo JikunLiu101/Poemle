@@ -92,8 +92,8 @@ export function GuessInput({
         }}
         onCompositionEnd={handleCompositionEnd}
         onChange={handleChange}
-        className="w-full max-w-sm rounded-lg border border-[#c4b59f]
-                   bg-[#ede0c8] px-3 py-2 text-center text-xl tracking-widest
+        className="w-full max-w-sm rounded-lg border-2 border-[#7a6650]
+                   bg-white/70 px-3 py-2 text-center text-xl tracking-widest
                    text-[#2a1d14]
                    focus:border-[#2a1d14] outline-none"
         placeholder={`输入 ${length} 字`}

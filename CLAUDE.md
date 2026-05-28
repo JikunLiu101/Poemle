@@ -77,6 +77,14 @@ Tests live next to the unit under test as `<file>.test.ts`.
   the punctuation for display. Punctuation cells render as read-only slots
   in `PreviewRow` / `GuessRow`; the player can also type punctuation in
   the input field but it's stripped by the reducer before evaluation.
+- **Dataset filters** (`scripts/curate-dataset.py`):
+  - `MIN_CJK_LEN = 5`: drop trivially short clauses.
+  - `MAX_CJK_LEN = 20`: drop sentences longer than 20 CJK chars — keeps
+    长短句 词 in but blocks prose-essay sentences.
+  - `MIN_POEM_LINES = 2`: any work that has fewer than 2 qualifying
+    sentences after filtering is dropped as a non-poem. Together these
+    catch the 古文岛 prose entries (师说 / 卖油翁 / 赤壁赋 / 岳阳楼记 /
+    etc.) that the grade-school index pages mix in with the poetry.
 - **No attempt cap**. Players can guess unlimited times. They surrender
   explicitly by exhausting the hint button — once every position has been
   either correctly guessed or hint-revealed, the next click of 提示 sets

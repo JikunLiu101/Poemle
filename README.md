@@ -20,7 +20,7 @@
 
 ## 特点 · Features
 
-- **800+ 首唐诗宋词**（数据爬取自 [古文岛](https://www.guwendao.net/)，覆盖小学/初中/高中必背、唐诗三百首、宋词三百首等合集）
+- **唐诗宋词全集**（数据爬取自 [古文岛](https://www.guwendao.net/) 的诗词合集：唐诗三百首、古诗三百首、宋词三百首）
 - **每日固定题**：通过 `YYYYMMDD` 的 FNV-1a 32-bit 哈希确定，无需后端
 - **IME 友好**：原生支持拼音输入法，逗号等标点可以在输入框中保留显示但不计入提交
 - **localStorage 持久化**：刷新页面也能恢复进行中的局
@@ -69,8 +69,12 @@ python3 scripts/curate-dataset.py
 
 It splits each poem on sentence-final punctuation (`。！？`) while keeping
 intra-sentence punctuation (`，；：、`) inside each line, filters dynasty to
-唐 / 宋, dedupes by (title, author), and validates structural invariants
-before writing.
+唐 / 宋, drops sentences shorter than 5 or longer than 20 CJK characters
+(so prose-essay sentences and degenerate puzzles are excluded), removes
+works with fewer than 2 qualifying sentences (catches the prose entries
+the grade-school canon pages mix in — 师说 / 赤壁赋 / 岳阳楼记 etc.),
+dedupes by (title, author), and validates structural invariants before
+writing.
 
 ## Acknowledgments
 

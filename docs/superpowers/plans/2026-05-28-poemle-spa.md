@@ -1948,18 +1948,10 @@ The MVP is shippable with the seed dataset. These tasks are tracked here for vis
 
 Curate at least 300 Tang poems and 200 Song lyrics, assign globally unique `line.id` values, and replace `src/data/poems.json`. The flat index, common-character table, and engine handle scale automatically. Verify `COMMON_CHARS.length === 40` after replacement.
 
-**Sources** (古文岛 / guwendao.net — pre-organised collections; scrape title, author, dynasty, and line text per entry):
+**Sources** (古文岛 / guwendao.net — poetry-only collections; the grade-school canon pages — 小学/初中/高中必背 — were tried earlier but mix in classical prose like 师说 / 赤壁赋 / 岳阳楼记 and have been removed from the scraper):
 
-Grade-level collections (broad coverage, mixed dynasties — useful for accessible, well-known pieces):
-
-- <https://www.guwendao.net/gushi/xiaoxue.aspx> — 小学必背 (primary-school canon)
-- <https://www.guwendao.net/gushi/chuzhong.aspx> — 初中必背 (junior-high canon)
-- <https://www.guwendao.net/gushi/gaozhong.aspx> — 高中必背 (senior-high canon)
-
-Dynasty-specific collections (use these to hit the 300 Tang / 200 Song quotas):
-
-- <https://www.guwendao.net/gushi/tangshi.aspx> — 唐诗 index
-- <https://www.guwendao.net/gushi/sanbai.aspx> — 唐诗三百首 (Three Hundred Tang Poems)
+- <https://www.guwendao.net/gushi/tangshi.aspx> — 唐诗三百首 (Three Hundred Tang Poems)
+- <https://www.guwendao.net/gushi/sanbai.aspx> — 古诗三百首 (Three Hundred Ancient Poems — mostly Tang, some earlier)
 - <https://www.guwendao.net/gushi/songsan.aspx> — 宋词三百首 (Three Hundred Song Lyrics)
 
 **Curation conventions** (must match the engine):

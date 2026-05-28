@@ -2,12 +2,10 @@
 """
 Scrape classical Chinese poems from guwendao.net and produce poems.json.
 
-Sources:
-  - https://www.guwendao.net/gushi/xiaoxue.aspx   小学必背
-  - https://www.guwendao.net/gushi/chuzhong.aspx  初中必背
-  - https://www.guwendao.net/gushi/gaozhong.aspx  高中必背
-  - https://www.guwendao.net/gushi/tangshi.aspx   唐诗 index
-  - https://www.guwendao.net/gushi/sanbai.aspx    唐诗三百首
+Sources (poetry-only collections — the grade-school canon pages mix in
+classical prose like 师说 / 卖油翁 / 赤壁赋 and have been dropped):
+  - https://www.guwendao.net/gushi/tangshi.aspx   唐诗三百首
+  - https://www.guwendao.net/gushi/sanbai.aspx    古诗三百首
   - https://www.guwendao.net/gushi/songsan.aspx   宋词三百首
 
 Output: src/data/poems.json
@@ -26,10 +24,10 @@ socket.setdefaulttimeout(20)
 BASE_URL = "https://www.guwendao.net"
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
+# Poetry-only collections. The grade-school canon pages (xiaoxue / chuzhong
+# / gaozhong) used to be scraped here too, but they mix in a lot of classical
+# prose (师说, 卖油翁, 赤壁赋, 岳阳楼记 …) which we don't want as puzzles.
 INDEX_PAGES = [
-    "https://www.guwendao.net/gushi/xiaoxue.aspx",
-    "https://www.guwendao.net/gushi/chuzhong.aspx",
-    "https://www.guwendao.net/gushi/gaozhong.aspx",
     "https://www.guwendao.net/gushi/tangshi.aspx",
     "https://www.guwendao.net/gushi/sanbai.aspx",
     "https://www.guwendao.net/gushi/songsan.aspx",
@@ -100,7 +98,9 @@ def clean_sentence(text: str) -> str:
     )
 
 
-MIN_CJK_LEN = 5  # require at least one 五言 half-line worth of characters
+MIN_CJK_LEN = 5    # require at least one 五言 half-line worth of characters
+MAX_CJK_LEN = 20   # drop overly long sentences (prose-essay style)
+MIN_POEM_LINES = 2 # drop entries that look like prose remnants
 
 
 def split_into_sentences(text: str) -> list[str]:
@@ -118,7 +118,12 @@ def split_into_sentences(text: str) -> list[str]:
         # Split on sentence-final punctuation only.
         for part in re.split(r'[。！？]', raw_line):
             cleaned = clean_sentence(part)
-            if _cjk_count(cleaned) >= MIN_CJK_LEN:
+            n = _cjk_count(cleaned)
+            # Reject too-short (degenerate puzzle) and too-long (prose-essay
+            # style) sentences. Classical 诗 / 词 sentences are typically
+            # 5–14 CJK chars after the comma; 20 leaves slack for long 词
+            # clauses without admitting prose.
+            if MIN_CJK_LEN <= n <= MAX_CJK_LEN:
                 sentences.append(cleaned)
     return sentences
 
@@ -244,6 +249,7 @@ def main() -> None:
     song_count = 0
     skip_dynasty = 0
     skip_duplicate = 0
+    skip_prose = 0
 
     # Preserve index order, not future-completion order
     for pid in id_order:
@@ -254,6 +260,12 @@ def main() -> None:
         key = (poem_data["title"], poem_data["author"])
         if key in seen_title_author:
             skip_duplicate += 1
+            continue
+        # Anything that ends up with fewer than MIN_POEM_LINES surviving
+        # sentences (typically prose essays whose long sentences were all
+        # filtered by MAX_CJK_LEN) is dropped as a non-poem.
+        if len(poem_data["lines_text"]) < MIN_POEM_LINES:
+            skip_prose += 1
             continue
         seen_title_author.add(key)
         poem_id_counter += 1
@@ -279,6 +291,7 @@ def main() -> None:
     total_lines = sum(len(p["lines"]) for p in poems)
     print(f"  Total poems: {len(poems)} (tang={tang_count}, song={song_count})", file=sys.stderr, flush=True)
     print(f"  Total lines: {total_lines}", file=sys.stderr, flush=True)
+    print(f"  Skipped (likely prose, <{MIN_POEM_LINES} qualifying sentences): {skip_prose}", file=sys.stderr, flush=True)
     print(f"  Skipped (dynasty / parse fail): {skip_dynasty}", file=sys.stderr, flush=True)
     print(f"  Skipped (duplicate title+author): {skip_duplicate}", file=sys.stderr, flush=True)
 

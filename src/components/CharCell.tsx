@@ -1,10 +1,10 @@
 import type { CharStatus } from '../types';
 
 const STATUS_BG: Record<CharStatus, string> = {
-  correct: 'bg-correct border-correct',
-  present: 'bg-present border-present',
-  absent: 'bg-absent border-absent',
-  unknown: 'bg-cell border-[#4a3a2a]',
+  correct: 'bg-correct border-correct text-white',
+  present: 'bg-present border-present text-white',
+  absent: 'bg-absent border-absent text-white',
+  unknown: 'bg-cell border-[#c4b59f] text-[#2a1d14]',
 };
 
 const SIZE_CLS = {

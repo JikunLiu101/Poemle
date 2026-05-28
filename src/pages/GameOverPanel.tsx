@@ -23,7 +23,7 @@ export function GameOverPanel({
       <h2 className="text-3xl font-bold">
         {state.won ? '答对了!' : '挑战结束'}
       </h2>
-      <p className="text-sm text-[#9a8870]">
+      <p className="text-sm text-[#7a6650]">
         尝试 {state.guesses.length} 次 · 提示 {state.revealedPositions.length} 字
       </p>
       <p className="text-xl">答案: {state.answerFull}</p>
@@ -31,7 +31,7 @@ export function GameOverPanel({
       {poem && (
         <article className="max-w-md">
           <h3 className="text-xl font-semibold">{poem.title}</h3>
-          <p className="text-sm text-[#9a8870]">
+          <p className="text-sm text-[#7a6650]">
             {poem.author} · {poem.dynasty === 'tang' ? '唐' : '宋'}
           </p>
           <div className="mt-3 flex flex-col gap-1">

@@ -32,12 +32,12 @@ export function GameBoard({ state, dispatch }: GameBoardProps) {
         <button
           type="button"
           onClick={() => dispatch({ type: 'RESET' })}
-          className="text-sm text-[#9a8870] hover:text-white transition-colors"
+          className="text-sm text-[#7a6650] hover:text-[#2a1d14] transition-colors"
           aria-label="返回首页"
         >
           ← 返回
         </button>
-        <p className="text-sm text-[#9a8870]">
+        <p className="text-sm text-[#7a6650]">
           {modeLabel} · {length} 字
         </p>
         <span aria-hidden className="w-12" />

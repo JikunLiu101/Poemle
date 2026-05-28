@@ -12,8 +12,8 @@ export default {
       colors: {
         correct: '#538d4e',
         present: '#b59f3b',
-        absent: '#4a3a2a',
-        cell: '#2a1f15',
+        absent: '#6e5d4a',
+        cell: '#ede0c8',
       },
       animation: {
         'flip-in': 'flip-in 0.3s ease-in forwards',

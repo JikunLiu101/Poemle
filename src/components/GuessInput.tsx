@@ -1,4 +1,10 @@
-import { useEffect, useRef, type ChangeEvent, type CompositionEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type CompositionEvent,
+} from 'react';
 
 // CJK Unified Ideographs (U+4E00–U+9FFF) plus Extension A (U+3400–U+4DBF).
 // Together they cover essentially every character appearing in the curated
@@ -32,17 +38,28 @@ export function GuessInput({
   onSubmit,
 }: GuessInputProps) {
   const ref = useRef<HTMLInputElement>(null);
-  // True while an IME composition is in progress (pinyin → 漢字). During
-  // composition the raw input contains Latin pinyin letters that we must NOT
-  // filter or truncate — doing so would corrupt the IME state mid-keystroke.
+
+  // Internal draft tracked separately from the parent's committed `value`.
+  // During an IME composition, the draft holds whatever the IME is showing
+  // (including in-progress pinyin); the parent state is only updated once
+  // composition ends. This is what lets a 5-char puzzle still accept a
+  // pinyin draft longer than 5 letters at the tail of the input.
+  const [draft, setDraft] = useState(value);
   const composingRef = useRef(false);
+
+  // Pull the parent's value into the draft when it changes for any reason
+  // OTHER than ongoing IME (e.g. submit cleared it, or restored on reload).
+  useEffect(() => {
+    if (!composingRef.current) setDraft(value);
+  }, [value]);
 
   useEffect(() => {
     if (!disabled) ref.current?.focus();
   }, [disabled, length]);
 
-  // Ready to submit only when the value is the right length AND fully CJK.
-  // The CJK check is what gates the button while pinyin is still on screen.
+  // The submit button can only activate when the committed value (parent
+  // state) is the full answer-length and entirely CJK. During composition
+  // the parent value lags, so this naturally stays false until commit.
   const ready =
     !disabled &&
     value.length === length &&
@@ -50,17 +67,21 @@ export function GuessInput({
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    if (composingRef.current) {
-      // Mid-composition: pass through so the IME can display its draft.
-      onChange(raw);
-    } else {
+    setDraft(raw);
+    if (!composingRef.current) {
+      // Direct input (typing without an IME, paste, backspace, etc.) —
+      // filter and propagate up.
       onChange(filterCJK(raw, length));
     }
+    // Mid-composition: parent state stays put. We'll push filtered text
+    // up in onCompositionEnd.
   };
 
   const handleCompositionEnd = (e: CompositionEvent<HTMLInputElement>) => {
     composingRef.current = false;
-    onChange(filterCJK(e.currentTarget.value, length));
+    const filtered = filterCJK(e.currentTarget.value, length);
+    setDraft(filtered);
+    if (filtered !== value) onChange(filtered);
   };
 
   return (
@@ -78,7 +99,7 @@ export function GuessInput({
         autoCapitalize="none"
         autoComplete="off"
         spellCheck={false}
-        value={value}
+        value={draft}
         disabled={disabled}
         onCompositionStart={() => {
           composingRef.current = true;

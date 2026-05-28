@@ -21,10 +21,10 @@ export function GameOverPanel({
   return (
     <section className="flex flex-col items-center gap-6 py-12 text-center">
       <h2 className="text-3xl font-bold">
-        {state.won ? '答對了!' : '挑戰結束'}
+        {state.won ? '答对了!' : '挑战结束'}
       </h2>
       <p className="text-sm text-[#818384]">
-        嘗試 {state.guesses.length} 次 · 提示 {state.revealedPositions.length} 字
+        尝试 {state.guesses.length} 次 · 提示 {state.revealedPositions.length} 字
       </p>
       <p className="text-xl">答案: {state.answerFull}</p>
 
@@ -56,10 +56,10 @@ export function GameOverPanel({
 
       <div className="flex flex-col sm:flex-row gap-3">
         <button onClick={onNewRandomGame} className="btn-primary">
-          再來一題
+          再来一题
         </button>
         <button onClick={onBackToLanding} className="btn-secondary">
-          返回首頁
+          返回首页
         </button>
       </div>
     </section>

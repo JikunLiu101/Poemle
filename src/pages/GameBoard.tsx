@@ -23,8 +23,8 @@ export function GameBoard({ state, dispatch }: GameBoardProps) {
   const dateLabel = formatPuzzleDate(state.puzzleDate);
   const modeLabel =
     state.mode === 'daily'
-      ? `今日詩題${dateLabel ? ` · ${dateLabel}` : ''}`
-      : '隨機一題';
+      ? `今日诗题${dateLabel ? ` · ${dateLabel}` : ''}`
+      : '随机一题';
 
   return (
     <section className="flex flex-col items-center gap-6 py-6">
@@ -33,7 +33,7 @@ export function GameBoard({ state, dispatch }: GameBoardProps) {
           type="button"
           onClick={() => dispatch({ type: 'RESET' })}
           className="text-sm text-[#818384] hover:text-white transition-colors"
-          aria-label="返回首頁"
+          aria-label="返回首页"
         >
           ← 返回
         </button>

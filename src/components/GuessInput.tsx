@@ -95,7 +95,7 @@ export function GuessInput({
         className="w-full max-w-sm rounded-lg border border-[#3a3a3c]
                    bg-[#1a1a1b] px-3 py-2 text-center text-xl tracking-widest
                    focus:border-white outline-none"
-        placeholder={`輸入 ${length} 字`}
+        placeholder={`输入 ${length} 字`}
       />
       <button type="submit" disabled={!ready} className="btn-primary">
         提交

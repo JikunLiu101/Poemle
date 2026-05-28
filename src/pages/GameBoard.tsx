@@ -10,8 +10,21 @@ export interface GameBoardProps {
   dispatch: Dispatch<Action>;
 }
 
+function formatPuzzleDate(yyyymmdd: string | undefined): string | null {
+  if (!yyyymmdd || yyyymmdd.length !== 8) return null;
+  const y = yyyymmdd.slice(0, 4);
+  const m = Number(yyyymmdd.slice(4, 6));
+  const d = Number(yyyymmdd.slice(6, 8));
+  return `${y}年${m}月${d}日`;
+}
+
 export function GameBoard({ state, dispatch }: GameBoardProps) {
   const length = state.answer.length;
+  const dateLabel = formatPuzzleDate(state.puzzleDate);
+  const modeLabel =
+    state.mode === 'daily'
+      ? `今日詩題${dateLabel ? ` · ${dateLabel}` : ''}`
+      : '隨機一題';
 
   return (
     <section className="flex flex-col items-center gap-6 py-6">
@@ -25,7 +38,7 @@ export function GameBoard({ state, dispatch }: GameBoardProps) {
           ← 返回
         </button>
         <p className="text-sm text-[#818384]">
-          {state.mode === 'daily' ? '今日詩題' : '隨機一題'} · {length} 字
+          {modeLabel} · {length} 字
         </p>
         <span aria-hidden className="w-12" />
       </div>

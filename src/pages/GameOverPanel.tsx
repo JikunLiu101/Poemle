@@ -23,6 +23,9 @@ export function GameOverPanel({
       <h2 className="text-3xl font-bold">
         {state.won ? '答對了!' : '挑戰結束'}
       </h2>
+      <p className="text-sm text-[#818384]">
+        嘗試 {state.guesses.length} 次 · 提示 {state.revealedPositions.length} 字
+      </p>
       <p className="text-xl">答案: {state.answer}</p>
 
       {poem && (

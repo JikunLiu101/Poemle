@@ -1,4 +1,5 @@
 import type { CharStatus } from '../types';
+import { onlyCJK } from '../engine/cjk';
 import { CharCell } from './CharCell';
 
 export interface PreviewRowProps {
@@ -34,13 +35,16 @@ export function PreviewRow({
   revealedPositions,
 }: PreviewRowProps) {
   const revealedSet = new Set(revealedPositions);
+  // Belt-and-braces: pinyin/Latin draft fragments should never reach the
+  // preview cells, even if some IME path leaks them into parent state.
+  const cjkInput = onlyCJK(input);
   const slots = Array.from({ length }, (_, i) => {
     // Hint-revealed positions always show the answer character in 'correct'
     // styling, overriding whatever the player typed at that slot.
     if (revealedSet.has(i)) {
       return { display: answer[i] ?? '', status: 'correct' as CharStatus, i };
     }
-    const typed = input[i] ?? '';
+    const typed = cjkInput[i] ?? '';
     const fixed = knownCorrectAt(i, cellStatuses, guesses);
     let status: CharStatus = 'unknown';
     if (typed && charMap[typed] === 'absent') {

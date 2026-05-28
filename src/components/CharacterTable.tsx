@@ -8,12 +8,14 @@ export interface CharacterTableProps {
 
 export function CharacterTable({ charMap }: CharacterTableProps) {
   return (
-    <div
-      className="grid gap-1 justify-center"
-      style={{ gridTemplateColumns: 'repeat(10, minmax(0, 1fr))' }}
-    >
+    <div className="grid grid-cols-8 gap-1.5 justify-center mx-auto w-fit">
       {COMMON_CHARS.map((ch) => (
-        <CharCell key={ch} char={ch} status={charMap[ch] ?? 'unknown'} />
+        <CharCell
+          key={ch}
+          char={ch}
+          status={charMap[ch] ?? 'unknown'}
+          size="sm"
+        />
       ))}
     </div>
   );

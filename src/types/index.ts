@@ -37,6 +37,12 @@ export interface PuzzleState {
   currentInput: string;
   /** Sorted-ascending answer indices the player has had revealed via 提示. */
   revealedPositions: number[];
+  /**
+   * Local date the puzzle was started on, formatted as `YYYYMMDD`. Set only
+   * when `mode === 'daily'`. Stored on state so the displayed date stays
+   * aligned with the puzzle even if the player keeps playing past midnight.
+   */
+  puzzleDate?: string;
   gameOver: boolean;
   won: boolean;
 }

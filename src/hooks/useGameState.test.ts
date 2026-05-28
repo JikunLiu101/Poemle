@@ -26,6 +26,13 @@ describe('reducer', () => {
     expect(next?.revealedPositions).toEqual([]);
   });
 
+  it('START_PUZZLE on daily mode stamps puzzleDate; random mode leaves it undefined', () => {
+    const daily = reducer(null, { type: 'START_PUZZLE', mode: 'daily', record });
+    const random = reducer(null, { type: 'START_PUZZLE', mode: 'random', record });
+    expect(daily?.puzzleDate).toMatch(/^\d{8}$/);
+    expect(random?.puzzleDate).toBeUndefined();
+  });
+
   it('SUBMIT_GUESS does NOT end the game just because of attempt count', () => {
     const state = makeState({
       guesses: Array(10).fill('XXXXX'),

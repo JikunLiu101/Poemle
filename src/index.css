@@ -40,11 +40,13 @@
            border border-[#818384] hover:border-white hover:bg-white/10 active:scale-95;
   }
 
+  /* Shared box look. Size (width/height/text-size/border-thickness) is set
+     per-cell in CharCell.tsx so we can have a compact variant for the
+     common-character table. */
   .cell-base {
     @apply inline-flex items-center justify-center
-           w-11 h-11 sm:w-14 sm:h-14
-           text-xl font-bold text-white
-           border-2 border-[#3a3a3c]
+           font-bold text-white
+           border-[#3a3a3c]
            select-none;
     font-family: 'Noto Serif SC', serif;
   }

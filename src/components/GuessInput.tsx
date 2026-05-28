@@ -5,11 +5,7 @@ import {
   type ChangeEvent,
   type CompositionEvent,
 } from 'react';
-
-// CJK Unified Ideographs (U+4E00–U+9FFF) plus Extension A (U+3400–U+4DBF).
-// Together they cover essentially every character appearing in the curated
-// classical-Chinese dataset.
-const CJK_RE = /[一-鿿㐀-䶿]/;
+import { CJK_RE } from '../engine/cjk';
 
 function filterCJK(input: string, max: number): string {
   let out = '';

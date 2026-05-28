@@ -3,6 +3,7 @@ import type { CharStatus, PuzzleState, SentenceRecord } from '../types';
 import { evaluateGuess } from '../engine/evaluate';
 import { updateCharMap } from '../engine/charMap';
 import { stripPunctuation } from '../engine/punctuation';
+import { formatYYYYMMDD } from '../engine/puzzle';
 import {
   clearPuzzleState,
   loadPuzzleState,
@@ -34,6 +35,7 @@ function startState(
     charMap: {},
     currentInput: '',
     revealedPositions: [],
+    puzzleDate: mode === 'daily' ? formatYYYYMMDD(new Date()) : undefined,
     gameOver: false,
     won: false,
   };

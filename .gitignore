@@ -24,3 +24,6 @@ coverage/
 
 # Plugin / tool caches kept under .github (e.g. ui-ux-pro-max data)
 .github/prompts/**
+
+# CodeGraph index cache
+.codegraph/

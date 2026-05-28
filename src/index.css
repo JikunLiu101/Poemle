@@ -42,7 +42,7 @@
 
   .cell-base {
     @apply inline-flex items-center justify-center
-           w-11 h-11 sm:w-13 sm:h-13
+           w-11 h-11 sm:w-14 sm:h-14
            text-xl font-bold text-white
            border-2 border-[#3a3a3c]
            select-none;

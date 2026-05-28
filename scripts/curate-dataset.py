@@ -35,7 +35,7 @@ INDEX_PAGES = [
     "https://www.guwendao.net/gushi/songsan.aspx",
 ]
 
-PUNCTUATION = set('。，！？、；：「」『』《》—.,-:;!?()（）[]【】…·~～·　​﻿""\'\'\'\"')
+PUNCTUATION = set('。，！？、；：「」『』《》—“”‘’.,-:;!?()（）[]【】…·~～·　​﻿""\'\'\'\"')
 
 DYNASTY_MAP = {
     "唐代": "tang",
@@ -76,7 +76,7 @@ def clean_line(text: str) -> str:
     return ''.join(ch for ch in text if ch not in PUNCTUATION).strip()
 
 
-MIN_LINE_LEN = 2  # drop trivially short clauses (e.g. the 鹅 in 咏鹅)
+MIN_LINE_LEN = 4  # drop trivially short clauses; 2-3 char puzzles are too easy
 
 
 def split_into_clauses(text: str) -> list[str]:

@@ -5,9 +5,14 @@ import { poems } from '../data';
 export interface GameOverPanelProps {
   state: PuzzleState;
   onNewRandomGame: () => void;
+  onBackToLanding: () => void;
 }
 
-export function GameOverPanel({ state, onNewRandomGame }: GameOverPanelProps) {
+export function GameOverPanel({
+  state,
+  onNewRandomGame,
+  onBackToLanding,
+}: GameOverPanelProps) {
   const poem = useMemo(
     () => poems.find((p) => p.lines.some((l) => l.id === state.sentenceId)),
     [state.sentenceId],
@@ -34,9 +39,14 @@ export function GameOverPanel({ state, onNewRandomGame }: GameOverPanelProps) {
         </article>
       )}
 
-      <button onClick={onNewRandomGame} className="btn-primary">
-        再來一題
-      </button>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button onClick={onNewRandomGame} className="btn-primary">
+          再來一題
+        </button>
+        <button onClick={onBackToLanding} className="btn-secondary">
+          返回首頁
+        </button>
+      </div>
     </section>
   );
 }

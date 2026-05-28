@@ -15,9 +15,20 @@ export function GameBoard({ state, dispatch }: GameBoardProps) {
 
   return (
     <section className="flex flex-col items-center gap-6 py-6">
-      <p className="text-sm text-[#818384]">
-        {state.mode === 'daily' ? '今日詩題' : '隨機一題'} · {length} 字
-      </p>
+      <div className="w-full flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => dispatch({ type: 'RESET' })}
+          className="text-sm text-[#818384] hover:text-white transition-colors"
+          aria-label="返回首頁"
+        >
+          ← 返回
+        </button>
+        <p className="text-sm text-[#818384]">
+          {state.mode === 'daily' ? '今日詩題' : '隨機一題'} · {length} 字
+        </p>
+        <span aria-hidden className="w-12" />
+      </div>
 
       <GuessHistory
         guesses={state.guesses}

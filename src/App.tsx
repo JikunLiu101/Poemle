@@ -44,6 +44,7 @@ export default function App() {
               record: getRandomPuzzle(sentenceIndex),
             });
           }}
+          onBackToLanding={() => dispatch({ type: 'RESET' })}
         />
       </main>
     );

@@ -35,7 +35,10 @@ INDEX_PAGES = [
     "https://www.guwendao.net/gushi/songsan.aspx",
 ]
 
-PUNCTUATION = set('。，！？、；：「」『』《》—“”‘’.,-:;!?()（）[]【】…·~～·　​﻿""\'\'\'\"')
+SENTENCE_DELIMS = set('。！？')          # split sentences on these
+INTRA_SENTENCE_PUNCT = set('，；：、')    # keep these inside a sentence
+# Everything else that's not CJK gets stripped (book brackets, dashes,
+# curly quotes, ASCII punctuation, whitespace, BOM, etc.).
 
 DYNASTY_MAP = {
     "唐代": "tang",
@@ -69,31 +72,55 @@ def strip_html_tags(text: str) -> str:
     return re.sub(r'<[^>]+>', '', text)
 
 
-def clean_line(text: str) -> str:
+def _is_cjk(ch: str) -> bool:
+    return ('一' <= ch <= '鿿') or ('㐀' <= ch <= '䶿')
+
+
+def _cjk_count(s: str) -> int:
+    return sum(1 for ch in s if _is_cjk(ch))
+
+
+def clean_sentence(text: str) -> str:
+    """Strip everything that isn't a CJK char or intra-sentence punctuation,
+    then trim leading/trailing punctuation/whitespace."""
     text = strip_html_tags(text).strip()
     text = re.sub(r'\([^)]*一作[^)]*\)', '', text)
     text = re.sub(r'（[^）]*一作[^）]*）', '', text)
-    return ''.join(ch for ch in text if ch not in PUNCTUATION).strip()
+    kept: list[str] = []
+    for ch in text:
+        if _is_cjk(ch) or ch in INTRA_SENTENCE_PUNCT:
+            kept.append(ch)
+    out = ''.join(kept)
+    # Trim punctuation/whitespace from both ends (a sentence shouldn't start
+    # or end with ，；：、).
+    return re.sub(
+        r'^[，；：、\s]+|[，；：、\s]+$',
+        '',
+        out,
+    )
 
 
-MIN_LINE_LEN = 4  # drop trivially short clauses; 2-3 char puzzles are too easy
+MIN_CJK_LEN = 5  # require at least one 五言 half-line worth of characters
 
 
-def split_into_clauses(text: str) -> list[str]:
+def split_into_sentences(text: str) -> list[str]:
+    """Split a poem body into full sentences. Sentence boundaries are
+    `。 ！ ？` (sentence-final punctuation) and line breaks; commas and
+    other intra-sentence punctuation are PRESERVED inside each sentence."""
     text = re.sub(r'[（\(][^）\)]*一作[^）\)]*[）\)]', '', text)
     text = re.sub(r'[（\(][^）\)]{1,30}[）\)]', '', text)
 
-    lines: list[str] = []
+    sentences: list[str] = []
     for raw_line in text.split('\n'):
         raw_line = raw_line.strip()
         if not raw_line:
             continue
-        clauses = re.split(r'[。，！？、；：「」『』《》—]', raw_line)
-        for clause in clauses:
-            clause = clean_line(clause)
-            if len(clause) >= MIN_LINE_LEN:
-                lines.append(clause)
-    return lines
+        # Split on sentence-final punctuation only.
+        for part in re.split(r'[。！？]', raw_line):
+            cleaned = clean_sentence(part)
+            if _cjk_count(cleaned) >= MIN_CJK_LEN:
+                sentences.append(cleaned)
+    return sentences
 
 
 def parse_poem_page(html: str, poem_id_str: str) -> dict | None:
@@ -152,7 +179,7 @@ def parse_poem_page(html: str, poem_id_str: str) -> dict | None:
     body_html = contson_match.group(1)
     body_html = re.sub(r'<br\s*/?>', '\n', body_html, flags=re.IGNORECASE)
     body_text = strip_html_tags(body_html)
-    lines = split_into_clauses(body_text)
+    lines = split_into_sentences(body_text)
     if not lines:
         return None
 
@@ -260,11 +287,15 @@ def main() -> None:
     line_ids = [l["id"] for p in poems for l in p["lines"]]
     assert len(line_ids) == len(set(line_ids)), "Duplicate line IDs!"
 
-    punc_set = set('。，！？、；：「」『』《》—.,-:;!?()（）')
+    # Only sentence-terminal punctuation and structural marks should be
+    # absent from a `line.text` now — intra-sentence ，；：、 are preserved.
+    forbidden_punc = set('。！？「」『』《》—“”‘’.-:;!?()（）[]【】…·~～·　​﻿""\'\'\'\"')
     for p in poems:
         for l in p["lines"]:
             for ch in l["text"]:
-                assert ch not in punc_set, f"Punctuation found in poem {p['id']}: '{ch}' in '{l['text']}'"
+                assert ch not in forbidden_punc, (
+                    f"Forbidden char in poem {p['id']}: '{ch}' in '{l['text']}'"
+                )
 
     if tang_count < 300:
         print(f"  [WARN] tang_count={tang_count} < 300", file=sys.stderr, flush=True)

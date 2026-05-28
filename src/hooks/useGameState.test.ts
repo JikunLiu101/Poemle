@@ -7,6 +7,7 @@ function makeState(over: Partial<PuzzleState> = {}): PuzzleState {
     mode: 'random',
     sentenceId: 1,
     answer: '床前明月光',
+    answerFull: '床前明月光',
     guesses: [],
     cellStatuses: [],
     charMap: {},

@@ -1,11 +1,13 @@
 import type { CharStatus } from '../types';
-import { onlyCJK } from '../engine/cjk';
+import { CJK_RE, onlyCJK } from '../engine/cjk';
 import { CharCell } from './CharCell';
 
 export interface PreviewRowProps {
-  length: number;
-  input: string;
+  /** Original sentence including intra-sentence punctuation. */
+  answerFull: string;
+  /** CJK-only answer text. */
   answer: string;
+  input: string;
   charMap: Record<string, CharStatus>;
   cellStatuses: CharStatus[][];
   guesses: string[];
@@ -13,52 +15,66 @@ export interface PreviewRowProps {
 }
 
 function knownCorrectAt(
-  i: number,
+  cjkIdx: number,
   cellStatuses: CharStatus[][],
   guesses: string[],
 ): string | null {
   for (let r = 0; r < cellStatuses.length; r++) {
-    if (cellStatuses[r][i] === 'correct') {
-      return guesses[r][i] ?? null;
+    if (cellStatuses[r][cjkIdx] === 'correct') {
+      return guesses[r][cjkIdx] ?? null;
     }
   }
   return null;
 }
 
 export function PreviewRow({
-  length,
-  input,
+  answerFull,
   answer,
+  input,
   charMap,
   cellStatuses,
   guesses,
   revealedPositions,
 }: PreviewRowProps) {
   const revealedSet = new Set(revealedPositions);
-  // Belt-and-braces: pinyin/Latin draft fragments should never reach the
-  // preview cells, even if some IME path leaks them into parent state.
   const cjkInput = onlyCJK(input);
-  const slots = Array.from({ length }, (_, i) => {
-    // Hint-revealed positions always show the answer character in 'correct'
-    // styling, overriding whatever the player typed at that slot.
-    if (revealedSet.has(i)) {
-      return { display: answer[i] ?? '', status: 'correct' as CharStatus, i };
+
+  type Slot = { key: number; display: string; status: CharStatus; readOnly: boolean };
+  const slots: Slot[] = [];
+  let cjkIdx = 0;
+
+  for (let i = 0; i < answerFull.length; i++) {
+    const ch = answerFull[i];
+    if (!CJK_RE.test(ch)) {
+      // Pre-filled punctuation cell — read-only.
+      slots.push({ key: i, display: ch, status: 'unknown', readOnly: true });
+      continue;
     }
-    const typed = cjkInput[i] ?? '';
-    const fixed = knownCorrectAt(i, cellStatuses, guesses);
-    let status: CharStatus = 'unknown';
-    if (typed && charMap[typed] === 'absent') {
-      status = 'absent';
-    } else if (fixed && typed === fixed) {
-      status = 'correct';
+    if (revealedSet.has(cjkIdx)) {
+      slots.push({
+        key: i,
+        display: answer[cjkIdx] ?? '',
+        status: 'correct',
+        readOnly: false,
+      });
+    } else {
+      const typed = cjkInput[cjkIdx] ?? '';
+      const fixed = knownCorrectAt(cjkIdx, cellStatuses, guesses);
+      let status: CharStatus = 'unknown';
+      if (typed && charMap[typed] === 'absent') {
+        status = 'absent';
+      } else if (fixed && typed === fixed) {
+        status = 'correct';
+      }
+      slots.push({ key: i, display: typed, status, readOnly: false });
     }
-    return { display: typed, status, i };
-  });
+    cjkIdx++;
+  }
 
   return (
-    <div className="flex gap-1 justify-center">
-      {slots.map(({ display, status, i }) => (
-        <CharCell key={i} char={display} status={status} />
+    <div className="flex gap-1 justify-center flex-wrap">
+      {slots.map(({ key, display, status, readOnly }) => (
+        <CharCell key={key} char={display} status={status} readOnly={readOnly} />
       ))}
     </div>
   );

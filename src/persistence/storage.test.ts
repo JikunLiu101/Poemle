@@ -15,6 +15,7 @@ const state: PuzzleState = {
   mode: 'daily',
   sentenceId: 101,
   answer: '床前明月光',
+  answerFull: '床前明月光，',
   guesses: ['月光床前明'],
   cellStatuses: [['present', 'present', 'present', 'present', 'present']],
   charMap: { 月: 'present', 光: 'present', 床: 'present', 前: 'present', 明: 'present' },
@@ -74,6 +75,24 @@ describe('storage', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(legacy));
     const loaded = loadPuzzleState()!;
     expect(loaded.revealedPositions).toEqual([]);
+  });
+
+  it('loadPuzzleState defaults answerFull to answer for pre-punctuation saves', () => {
+    const legacy = {
+      mode: 'daily',
+      sentenceId: 1,
+      answer: '床前明月光',
+      guesses: [],
+      cellStatuses: [],
+      charMap: {},
+      revealedPositions: [],
+      gameOver: false,
+      won: false,
+      // No answerFull field.
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(legacy));
+    const loaded = loadPuzzleState()!;
+    expect(loaded.answerFull).toBe('床前明月光');
   });
 
   it('loadPuzzleState returns null on structurally invalid saves', () => {

@@ -32,6 +32,11 @@ export function loadPuzzleState(): PuzzleState | null {
       revealedPositions: Array.isArray(parsed.revealedPositions)
         ? parsed.revealedPositions
         : [],
+      // Default for saves predating the punctuation-slot display.
+      answerFull:
+        typeof parsed.answerFull === 'string'
+          ? parsed.answerFull
+          : (parsed.answer as string),
     };
   } catch {
     return null;

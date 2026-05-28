@@ -26,7 +26,7 @@ export function GameOverPanel({
       <p className="text-sm text-[#818384]">
         嘗試 {state.guesses.length} 次 · 提示 {state.revealedPositions.length} 字
       </p>
-      <p className="text-xl">答案: {state.answer}</p>
+      <p className="text-xl">答案: {state.answerFull}</p>
 
       {poem && (
         <article className="max-w-md">

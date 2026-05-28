@@ -30,6 +30,7 @@ function startState(
     mode,
     sentenceId: record.lineId,
     answer: clean,
+    answerFull: record.text,
     guesses: [],
     cellStatuses: [],
     charMap: {},

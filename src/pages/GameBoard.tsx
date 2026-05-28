@@ -46,12 +46,13 @@ export function GameBoard({ state, dispatch }: GameBoardProps) {
       <GuessHistory
         guesses={state.guesses}
         cellStatuses={state.cellStatuses}
+        answerFull={state.answerFull}
       />
 
       <PreviewRow
-        length={length}
         input={state.currentInput}
         answer={state.answer}
+        answerFull={state.answerFull}
         charMap={state.charMap}
         cellStatuses={state.cellStatuses}
         guesses={state.guesses}

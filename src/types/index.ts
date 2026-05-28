@@ -30,7 +30,12 @@ export type CellStatus = CharStatus;
 export interface PuzzleState {
   mode: 'daily' | 'random';
   sentenceId: number;
+  /** CJK-only — what the player actually types. Length = N. */
   answer: string;
+  /** Original sentence including intra-sentence punctuation (，；：、). The
+   *  preview/history rows render N + P cells against this string so commas
+   *  appear as read-only slots. Length = N + P. */
+  answerFull: string;
   guesses: string[];
   cellStatuses: CharStatus[][];
   charMap: Record<string, CharStatus>;

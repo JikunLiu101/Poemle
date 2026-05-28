@@ -52,6 +52,27 @@ describe('reducer', () => {
     expect(next?.won).toBe(true);
   });
 
+  it('SUBMIT_GUESS strips intra-sentence punctuation before evaluating', () => {
+    // User typed the full sentence with the comma. The reducer should
+    // peel the comma off and evaluate the 5 CJK characters only.
+    const state = makeState({ currentInput: '床前明，月光' });
+    const next = reducer(state, { type: 'SUBMIT_GUESS' });
+    expect(next?.gameOver).toBe(true);
+    expect(next?.won).toBe(true);
+    // The stored guess should be the CJK-only form so the history row
+    // renders correctly.
+    expect(next?.guesses[0]).toBe('床前明月光');
+  });
+
+  it('UPDATE_INPUT does not truncate when input contains punctuation', () => {
+    const state = makeState();
+    const next = reducer(state, {
+      type: 'UPDATE_INPUT',
+      input: '床前明月光，疑是地上霜',
+    });
+    expect(next?.currentInput).toBe('床前明月光，疑是地上霜');
+  });
+
   it('REVEAL_HINT adds one position to revealedPositions, sorted ascending', () => {
     const state = makeState();
     const a = reducer(state, { type: 'REVEAL_HINT' });

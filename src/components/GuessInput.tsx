@@ -5,18 +5,7 @@ import {
   type ChangeEvent,
   type CompositionEvent,
 } from 'react';
-import { CJK_RE } from '../engine/cjk';
-
-function filterCJK(input: string, max: number): string {
-  let out = '';
-  for (const ch of input) {
-    if (CJK_RE.test(ch)) {
-      out += ch;
-      if (out.length >= max) break;
-    }
-  }
-  return out;
-}
+import { cjkCount, filterInput } from '../engine/cjk';
 
 export interface GuessInputProps {
   length: number;
@@ -53,13 +42,10 @@ export function GuessInput({
     if (!disabled) ref.current?.focus();
   }, [disabled, length]);
 
-  // The submit button can only activate when the committed value (parent
-  // state) is the full answer-length and entirely CJK. During composition
-  // the parent value lags, so this naturally stays false until commit.
-  const ready =
-    !disabled &&
-    value.length === length &&
-    [...value].every((ch) => CJK_RE.test(ch));
+  // Ready to submit when the input contains exactly `length` CJK characters.
+  // Intra-sentence punctuation in the input is allowed (it's filtered out
+  // by the reducer before evaluation) and doesn't change the ready state.
+  const ready = !disabled && cjkCount(value) === length;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
@@ -70,9 +56,8 @@ export function GuessInput({
       setDraft(raw);
     } else {
       // Direct input (typing without an IME, paste, backspace, etc.) —
-      // filter BEFORE updating the draft so a typed comma never flashes
-      // in the input element.
-      const filtered = filterCJK(raw, length);
+      // strip pinyin/Latin but keep CJK and intra-sentence punctuation.
+      const filtered = filterInput(raw, length);
       setDraft(filtered);
       onChange(filtered);
     }
@@ -80,7 +65,7 @@ export function GuessInput({
 
   const handleCompositionEnd = (e: CompositionEvent<HTMLInputElement>) => {
     composingRef.current = false;
-    const filtered = filterCJK(e.currentTarget.value, length);
+    const filtered = filterInput(e.currentTarget.value, length);
     setDraft(filtered);
     if (filtered !== value) onChange(filtered);
   };

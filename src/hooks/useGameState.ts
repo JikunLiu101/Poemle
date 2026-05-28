@@ -1,5 +1,6 @@
 import { useEffect, useReducer, type Dispatch } from 'react';
 import type { CharStatus, PuzzleState, SentenceRecord } from '../types';
+import { onlyCJK } from '../engine/cjk';
 import { evaluateGuess } from '../engine/evaluate';
 import { updateCharMap } from '../engine/charMap';
 import { stripPunctuation } from '../engine/punctuation';
@@ -72,12 +73,15 @@ export function reducer(state: State, action: Action): State {
 
     case 'UPDATE_INPUT':
       if (!state || state.gameOver) return state;
-      // Constrain input length to the answer's guessable length.
-      return { ...state, currentInput: action.input.slice(0, state.answer.length) };
+      // No length truncation here — GuessInput's filterInput already caps
+      // the CJK count and allows intra-sentence punctuation alongside it.
+      return { ...state, currentInput: action.input };
 
     case 'SUBMIT_GUESS': {
       if (!state || state.gameOver) return state;
-      const guess = state.currentInput;
+      // Strip punctuation from the visible input before evaluating; the
+      // engine only operates on CJK characters.
+      const guess = onlyCJK(state.currentInput);
       if (guess.length !== state.answer.length) return state;
       const statuses: CharStatus[] = evaluateGuess(guess, state.answer);
       const won = statuses.every((s) => s === 'correct');
